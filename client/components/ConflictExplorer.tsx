@@ -212,24 +212,15 @@ export const ConflictExplorer: React.FC<ConflictExplorerProps> = ({
                   </div>
                 )}
 
-                {onNavigateToQA && (
-                  <div className="flex flex-wrap justify-end gap-3 border-t border-violet-100 pt-5">
-                    <button
-                      onClick={onRefresh}
-                      className="tg-secondary-btn px-5 py-3"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5 text-violet-500" />
-                      <span>Refresh list</span>
-                    </button>
-                    <button
-                      onClick={() => onNavigateToQA(getSuggestedQuestion(selectedConflict))}
-                      className="tg-primary-btn px-5 py-3"
-                    >
-                      <span>Open in console</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
+                <div className="flex flex-wrap justify-end gap-3 border-t border-violet-100 pt-5">
+                  <button
+                    onClick={onRefresh}
+                    className="tg-secondary-btn px-5 py-3"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-violet-500" />
+                    <span>Refresh list</span>
+                  </button>
+                </div>
               </div>
             </section>
           )}

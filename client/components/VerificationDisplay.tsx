@@ -4,10 +4,11 @@ import {
   AlertTriangle, 
   HelpCircle, 
   AlertOctagon,
+  FileText,
   Clock,
-  Sparkles,
   Layers,
-  ArrowRight
+  ExternalLink,
+  ChevronRight
 } from 'lucide-react';
 import { VerificationResult, VerificationStatus } from '../../shared/types';
 
@@ -26,159 +27,144 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
     switch (status) {
       case 'VERIFIED':
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-semibold text-sm">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>VERIFIED CLAIM</span>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            Verified
+          </span>
         );
       case 'CONFLICT_DETECTED':
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 font-semibold text-sm">
-            <AlertOctagon className="w-4 h-4 text-red-400 animate-pulse" />
-            <span>IRRESOLVABLE CONFLICT DETECTED</span>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+            <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
+            Conflict Detected (Unresolved)
+          </span>
         );
       case 'PARTIALLY_VERIFIED':
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 font-semibold text-sm">
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
-            <span>PARTIALLY VERIFIED</span>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+            Partially Verified
+          </span>
         );
       case 'INSUFFICIENT_EVIDENCE':
       default:
         return (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-700/40 border border-slate-600/50 text-slate-300 font-semibold text-sm">
-            <HelpCircle className="w-4 h-4 text-slate-400" />
-            <span>INSUFFICIENT EVIDENCE</span>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+            <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+            Insufficient Evidence
+          </span>
         );
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Verification Stages Progress Card */}
-      <div className="p-4 rounded-xl bg-navy-900 border border-slate-800">
-        <div className="flex items-center justify-between mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-electric-blue" />
-            <span>Multi-Agent Verification Pipeline Execution</span>
+    <div className="space-y-4">
+      {/* 4-Agent Pipeline Execution Strip */}
+      <div className="bg-white border border-slate-200 rounded p-3">
+        <div className="flex items-center justify-between text-xs font-medium text-slate-500 mb-2">
+          <div className="flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-slate-400" />
+            <span className="font-semibold text-slate-700">Verification Pipeline Execution</span>
           </div>
           {result.metadata && (
-            <span className="font-mono text-slate-400">
-              Total Duration: {result.metadata.processingTimeMs}ms
+            <span className="font-mono text-[11px] text-slate-400">
+              Completed in {result.metadata.processingTimeMs}ms
             </span>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
           {result.verificationStages.map((stage, idx) => (
             <div
               key={stage.id}
-              className={`p-3 rounded-lg border text-xs transition-all ${
-                stage.status === 'completed'
-                  ? 'bg-slate-800/40 border-slate-700/80 text-slate-200'
-                  : stage.status === 'running'
-                  ? 'bg-electric-violet/10 border-electric-violet/50 text-white animate-pulse'
-                  : 'bg-navy-950/40 border-slate-800/50 text-slate-400'
-              }`}
+              className="p-2.5 rounded border border-slate-200 bg-slate-50 text-xs"
             >
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-mono text-[10px] text-slate-400">Agent {idx + 1}</span>
-                <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${
-                  stage.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'
-                }`}>
-                  {stage.status}
-                </span>
+              <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-1">
+                <span>Agent {idx + 1}</span>
+                <span className="font-semibold text-slate-600 uppercase">{stage.status}</span>
               </div>
-              <div className="font-medium text-slate-200">{stage.agent}</div>
-              <div className="text-[11px] text-slate-400 mt-1 line-clamp-2">{stage.summary || stage.name}</div>
+              <div className="font-semibold text-slate-900 text-xs">{stage.agent}</div>
+              <div className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{stage.summary || stage.name}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Answer & Overall Verdict */}
-      <div className="p-6 rounded-xl bg-navy-900 border border-slate-800 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Target Question</span>
-            <h2 className="text-lg font-bold text-white">{result.question}</h2>
+      {/* Main Answer & Resolution Box */}
+      <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Evaluated Query</span>
+            <h2 className="text-base font-semibold text-slate-900">{result.question}</h2>
           </div>
-          {getStatusBadge(result.overallStatus)}
+          <div>{getStatusBadge(result.overallStatus)}</div>
         </div>
 
-        {/* Formulated Verified Answer */}
-        <div className="space-y-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-electric-blue" />
-            Synthesized Answer
-          </span>
-          <div className="p-4 rounded-lg bg-navy-950/70 border border-slate-800 text-slate-200 leading-relaxed text-sm whitespace-pre-wrap font-normal">
+        {/* Synthesized Response */}
+        <div className="space-y-1.5">
+          <span className="text-xs font-semibold text-slate-700">Formulated Answer</span>
+          <div className="p-3.5 rounded bg-slate-50 border border-slate-200 text-slate-800 text-xs leading-relaxed whitespace-pre-wrap">
             {result.answer}
           </div>
         </div>
 
-        {/* Resolution Justification / Explanation */}
+        {/* Legal/Precedence Justification */}
         {result.resolutionExplanation && (
-          <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700/60 space-y-1 text-xs">
-            <div className="font-semibold text-slate-300 flex items-center gap-1.5">
-              <span>TruthGuard Governance Justification</span>
-            </div>
-            <p className="text-slate-400 leading-relaxed font-sans">
+          <div className="p-3 rounded border border-slate-200 bg-white text-xs space-y-1">
+            <span className="font-semibold text-slate-800 block">Governance & Precedence Justification</span>
+            <p className="text-slate-600 leading-relaxed">
               {result.resolutionExplanation}
             </p>
           </div>
         )}
       </div>
 
-      {/* Conflicts & Contradiction Details if any */}
+      {/* Contradictions Breakdown (Side by Side) if detected */}
       {result.conflicts.length > 0 && (
-        <div className="p-6 rounded-xl bg-red-950/20 border border-red-500/30 space-y-4">
-          <div className="flex items-center gap-2 text-red-400">
-            <AlertOctagon className="w-5 h-5" />
-            <h3 className="font-bold text-sm uppercase tracking-wider">
+        <div className="bg-white border border-rose-200 rounded p-5 space-y-3">
+          <div className="flex items-center gap-2 text-rose-900 border-b border-rose-100 pb-2">
+            <AlertOctagon className="w-4 h-4 text-rose-600" />
+            <h3 className="font-semibold text-xs uppercase tracking-wider">
               Material Contradictions Detected ({result.conflicts.length})
             </h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {result.conflicts.map((conflict) => (
-              <div key={conflict.id} className="p-4 rounded-lg bg-navy-900/90 border border-red-500/30 space-y-3">
+              <div key={conflict.id} className="p-3.5 rounded border border-slate-200 bg-slate-50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-white text-sm">{conflict.description}</span>
-                  <span className={`text-xs px-2.5 py-0.5 rounded-full font-mono font-semibold ${
-                    conflict.resolutionStatus === 'RESOLVED' 
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                  <span className="font-semibold text-slate-900 text-xs">{conflict.description}</span>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
+                    conflict.resolutionStatus === 'RESOLVED'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-rose-100 text-rose-800'
                   }`}>
                     {conflict.resolutionStatus}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {conflict.explanation}
                 </p>
 
-                {/* Conflicting Statements Side-by-Side */}
+                {/* Conflicting Statements */}
                 {conflict.conflictingStatements && conflict.conflictingStatements.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                     {conflict.conflictingStatements.map((stmt, sIdx) => (
-                      <div key={sIdx} className="p-3 rounded bg-navy-950 border border-slate-800 space-y-1.5 text-xs">
-                        <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800/60 pb-1">
-                          <span className="font-semibold text-electric-blue truncate max-w-[200px]">
+                      <div key={sIdx} className="p-3 rounded bg-white border border-slate-200 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 border-b border-slate-100 pb-1">
+                          <span className="font-medium text-slate-900 truncate max-w-[200px]">
                             {stmt.documentTitle}
                           </span>
-                          <span className="font-mono">v{stmt.version}</span>
+                          <span className="font-mono text-slate-600">v{stmt.version}</span>
                         </div>
-                        <div className="text-slate-200 italic font-serif">
+                        <div className="text-slate-800 italic leading-snug">
                           "{stmt.quote}"
                         </div>
-                        <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between">
+                        <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between pt-1">
                           <span>Effective: {stmt.effectiveFrom}</span>
                           {stmt.ruleValue !== undefined && (
-                            <span className="text-amber-400 font-bold">Rule: {stmt.ruleValue}</span>
+                            <span className="text-slate-900 font-bold">Rule: {stmt.ruleValue}</span>
                           )}
                         </div>
                       </div>
@@ -187,8 +173,9 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
                 )}
 
                 {conflict.resolutionJustification && (
-                  <div className="p-2.5 rounded bg-emerald-950/30 border border-emerald-500/30 text-xs text-emerald-300">
-                    <strong>Precedence Resolution:</strong> {conflict.resolutionJustification}
+                  <div className="p-2.5 rounded bg-white border border-emerald-200 text-xs text-emerald-900">
+                    <strong className="font-semibold text-emerald-800">Resolution: </strong>
+                    {conflict.resolutionJustification}
                   </div>
                 )}
               </div>
@@ -197,74 +184,76 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
         </div>
       )}
 
-      {/* Claim-by-Claim Verification Inspection */}
-      <div className="p-6 rounded-xl bg-navy-900 border border-slate-800 space-y-4">
-        <h3 className="font-bold text-sm uppercase tracking-wider text-slate-400">
+      {/* Atomic Claim Verification Audit Table */}
+      <div className="bg-white border border-slate-200 rounded p-4 space-y-3">
+        <h3 className="font-semibold text-xs uppercase tracking-wider text-slate-600">
           Atomic Claim Verification Audit
         </h3>
 
-        <div className="space-y-2.5">
-          {result.claims.map((claim) => (
-            <div 
-              key={claim.id} 
-              className={`p-3.5 rounded-lg border text-xs flex flex-col gap-1.5 ${
-                claim.status === 'SUPPORTED'
-                  ? 'bg-slate-800/30 border-slate-700/60'
-                  : claim.status === 'CONTRADICTED'
-                  ? 'bg-red-500/10 border-red-500/30'
-                  : 'bg-amber-500/10 border-amber-500/30'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-100 text-sm">{claim.text}</span>
-                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded font-mono ${
-                  claim.status === 'SUPPORTED'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : claim.status === 'CONTRADICTED'
-                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                }`}>
-                  {claim.status}
-                </span>
-              </div>
-              <div className="text-slate-400 text-xs">{claim.explanation}</div>
-            </div>
-          ))}
+        <div className="border border-slate-200 rounded overflow-hidden">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+              <tr>
+                <th className="py-2.5 px-3 w-1/2">Deconstructed Claim</th>
+                <th className="py-2.5 px-3">Verification Status</th>
+                <th className="py-2.5 px-3">Agent Audit Finding</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 text-slate-700">
+              {result.claims.map((claim) => (
+                <tr key={claim.id} className="hover:bg-slate-50">
+                  <td className="py-2.5 px-3 font-medium text-slate-900">{claim.text}</td>
+                  <td className="py-2.5 px-3">
+                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                      claim.status === 'SUPPORTED'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : claim.status === 'CONTRADICTED'
+                        ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200'
+                    }`}>
+                      {claim.status}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-3 text-slate-600">{claim.explanation}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Verified Provenance / Cited Sources */}
+      {/* Cited Document Passages */}
       {result.citedSources.length > 0 && (
-        <div className="p-6 rounded-xl bg-navy-900 border border-slate-800 space-y-4">
-          <h3 className="font-bold text-sm uppercase tracking-wider text-slate-400">
-            Retrieved Passages & Provenance Citations ({result.citedSources.length})
+        <div className="bg-white border border-slate-200 rounded p-4 space-y-3">
+          <h3 className="font-semibold text-xs uppercase tracking-wider text-slate-600">
+            Retrieved Passages & Provenance ({result.citedSources.length})
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {result.citedSources.map((citation, idx) => (
               <div 
                 key={idx} 
-                className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 hover:border-slate-700 transition-colors text-xs space-y-2"
+                className="p-3 rounded border border-slate-200 bg-slate-50 hover:bg-white text-xs space-y-2 transition-colors"
               >
-                <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-1.5">
-                  <span className="font-semibold text-slate-200 truncate max-w-[240px]">
+                <div className="flex items-center justify-between text-slate-500 border-b border-slate-200 pb-1.5">
+                  <span className="font-medium text-slate-900 truncate max-w-[240px]">
                     {citation.documentTitle}
                   </span>
-                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
                     v{citation.version}
                   </span>
                 </div>
-                <div className="text-slate-300 italic font-serif text-[11px] leading-relaxed">
+                <div className="text-slate-700 italic text-[11px] leading-relaxed">
                   "{citation.quote}"
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1">
+                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1">
                   <span>Effective: {citation.effectiveFrom}</span>
                   {onSelectDocument && (
                     <button
                       onClick={() => onSelectDocument(citation.documentId)}
-                      className="text-electric-blue hover:underline flex items-center gap-1"
+                      className="text-slate-900 font-medium hover:underline flex items-center gap-1"
                     >
-                      View Source <ArrowRight className="w-3 h-3" />
+                      View in Library <ChevronRight className="w-3 h-3" />
                     </button>
                   )}
                 </div>

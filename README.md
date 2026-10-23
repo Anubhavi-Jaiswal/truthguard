@@ -2,7 +2,7 @@
 
 > **Category**: Trustworthy AI / Multi-Agent Document Verification System  
 > **Target Audience**: Compliance teams, HR/legal operations, security researchers, and organizations with frequently updated policies.  
-> **Live Public URL**: [https://clever-snails-laugh.loca.lt](https://clever-snails-laugh.loca.lt)
+> **Live Public URL**: [https://free-crabs-sit.loca.lt](https://free-crabs-sit.loca.lt)
 
 ---
 
@@ -119,6 +119,6 @@ Visit `http://localhost:3000` in your browser.
 ---
 
 ## 8. Deployment Information
-- **Live URL**: `https://clever-snails-laugh.loca.lt` (Bypass header: `bypass-tunnel-reminder: true` or click "Click to Continue" in browser)
+- **Live URL**: `https://free-crabs-sit.loca.lt` (Bypass header: `bypass-tunnel-reminder: true` or click "Click to Continue" in browser)
 - **Local Fallback**: `http://localhost:3000`
 - **Docker / Production Ready**: Production static build bundled into `dist/` with a standalone Node.js server.

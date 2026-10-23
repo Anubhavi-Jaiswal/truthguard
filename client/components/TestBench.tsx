@@ -5,10 +5,8 @@ import {
   CheckCircle2, 
   XCircle, 
   Clock, 
-  ShieldCheck, 
-  Sparkles,
-  ChevronRight,
-  Loader2
+  Loader2,
+  ChevronRight
 } from 'lucide-react';
 import { TestCase, TestResult, VerificationStatus } from '../../shared/types';
 
@@ -45,193 +43,186 @@ export const TestBench: React.FC<TestBenchProps> = ({ onNavigateToQA }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-4">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <FlaskConical className="w-5 h-5 text-electric-blue" />
-            TruthGuard Adversarial Test Bench
-          </h2>
-          <p className="text-sm text-slate-400">
-            Execute 8 automated verification scenarios against deterministic test fixtures to rigorously assess contradiction detection, effective dates, and injection resistance.
+          <h2 className="text-base font-semibold text-slate-900">Adversarial Test Suite</h2>
+          <p className="text-xs text-slate-500">
+            Automated compliance fixtures testing supersession, effective date boundaries, numeric contradictions, and prompt injections.
           </p>
         </div>
 
         <button
           onClick={handleRunAll}
           disabled={running}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-electric-blue to-electric-violet hover:opacity-90 disabled:opacity-50 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-electric-blue/20 transition-all"
+          className="px-3.5 py-1.5 rounded bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
         >
           {running ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Executing Test Suite...</span>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Running Suite...</span>
             </>
           ) : (
             <>
-              <Play className="w-4 h-4 fill-current" />
-              <span>Run All Adversarial Tests</span>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Execute All Benchmarks</span>
             </>
           )}
         </button>
       </div>
 
-      {/* Stats Summary Bar */}
+      {/* Metrics Row */}
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-4 rounded-xl bg-navy-900 border border-slate-800">
-            <span className="text-xs text-slate-400 block mb-1">Total Scenarios</span>
-            <span className="text-2xl font-bold text-white font-mono">{stats.total}</span>
+          <div className="p-3 rounded bg-white border border-slate-200">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase">Total Fixtures</span>
+            <span className="text-xl font-semibold text-slate-900 font-mono">{stats.total}</span>
           </div>
-          <div className="p-4 rounded-xl bg-navy-900 border border-slate-800">
-            <span className="text-xs text-slate-400 block mb-1">Passed Criteria</span>
-            <span className="text-2xl font-bold text-emerald-400 font-mono">{stats.passed}</span>
+          <div className="p-3 rounded bg-white border border-slate-200">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase">Passing</span>
+            <span className="text-xl font-semibold text-emerald-700 font-mono">{stats.passed}</span>
           </div>
-          <div className="p-4 rounded-xl bg-navy-900 border border-slate-800">
-            <span className="text-xs text-slate-400 block mb-1">Failed Criteria</span>
-            <span className="text-2xl font-bold text-red-400 font-mono">{stats.failed}</span>
+          <div className="p-3 rounded bg-white border border-slate-200">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase">Failing</span>
+            <span className="text-xl font-semibold text-rose-700 font-mono">{stats.failed}</span>
           </div>
-          <div className="p-4 rounded-xl bg-navy-900 border border-slate-800">
-            <span className="text-xs text-slate-400 block mb-1">Pass Rate</span>
-            <span className="text-2xl font-bold text-electric-blue font-mono">{stats.passRate}%</span>
+          <div className="p-3 rounded bg-white border border-slate-200">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase">Pass Rate</span>
+            <span className="text-xl font-semibold text-slate-900 font-mono">{stats.passRate}%</span>
           </div>
         </div>
       )}
 
-      {/* Results Grid */}
+      {/* Results View */}
       {testResults ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Test list */}
-          <div className="space-y-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block">
-              Executed Scenarios
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">
+              Test Fixtures
             </span>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {testResults.map((r) => {
                 const isSelected = selectedResult?.testId === r.testId;
                 return (
                   <div
                     key={r.testId}
                     onClick={() => setSelectedResult(r)}
-                    className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                    className={`p-2.5 rounded border cursor-pointer transition-colors ${
                       isSelected
-                        ? 'bg-navy-900 border-electric-blue shadow-md'
-                        : 'bg-navy-900/60 border-slate-800 hover:border-slate-700'
+                        ? 'bg-slate-50 border-slate-400'
+                        : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between text-xs mb-1">
                       <div className="flex items-center gap-1.5">
                         {r.passed ? (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                         ) : (
-                          <XCircle className="w-3.5 h-3.5 text-red-400" />
+                          <XCircle className="w-3.5 h-3.5 text-rose-600" />
                         )}
-                        <span className={`font-mono font-bold text-[10px] ${
-                          r.passed ? 'text-emerald-400' : 'text-red-400'
+                        <span className={`font-mono font-semibold text-[10px] ${
+                          r.passed ? 'text-emerald-700' : 'text-rose-700'
                         }`}>
                           {r.passed ? 'PASS' : 'FAIL'}
                         </span>
                       </div>
                       <span className="text-[10px] text-slate-400 font-mono">{r.executionTimeMs}ms</span>
                     </div>
-                    <div className="font-medium text-xs text-white line-clamp-1">{r.title}</div>
+                    <div className="font-medium text-xs text-slate-900 line-clamp-1">{r.title}</div>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Detailed Test Inspector */}
+          {/* Test Inspector */}
           <div className="lg:col-span-2">
             {selectedResult ? (
-              <div className="p-6 rounded-xl bg-navy-900 border border-slate-800 space-y-5">
-                <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+              <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
+                <div className="flex items-start justify-between border-b border-slate-100 pb-3">
                   <div>
-                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-                      Test Case • {selectedResult.testId}
+                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                      Case ID: {selectedResult.testId}
                     </span>
-                    <h3 className="text-base font-bold text-white">{selectedResult.title}</h3>
+                    <h3 className="text-sm font-semibold text-slate-900">{selectedResult.title}</h3>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${
+                  <span className={`px-2 py-0.5 rounded text-xs font-mono font-semibold ${
                     selectedResult.passed 
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      ? 'bg-emerald-100 text-emerald-800' 
+                      : 'bg-rose-100 text-rose-800'
                   }`}>
-                    {selectedResult.passed ? 'VERIFICATION PASSED' : 'VERIFICATION FAILED'}
+                    {selectedResult.passed ? 'PASSED' : 'FAILED'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="p-3 rounded-lg bg-navy-950 border border-slate-800">
-                    <span className="text-slate-400 text-[10px] block">Expected Status</span>
-                    <span className="text-slate-200 font-bold">{selectedResult.expectedStatus}</span>
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                    <span className="text-slate-500 text-[10px] block">Expected Status</span>
+                    <span className="text-slate-900 font-semibold">{selectedResult.expectedStatus}</span>
                   </div>
-                  <div className="p-3 rounded-lg bg-navy-950 border border-slate-800">
-                    <span className="text-slate-400 text-[10px] block">Actual Status Produced</span>
-                    <span className={`font-bold ${
-                      selectedResult.actualStatus === selectedResult.expectedStatus ? 'text-emerald-400' : 'text-red-400'
+                  <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                    <span className="text-slate-500 text-[10px] block">Actual Status Produced</span>
+                    <span className={`font-semibold ${
+                      selectedResult.actualStatus === selectedResult.expectedStatus ? 'text-emerald-700' : 'text-rose-700'
                     }`}>
                       {selectedResult.actualStatus}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Query Evaluated
-                  </span>
-                  <div className="p-3 rounded-lg bg-navy-950 border border-slate-800 text-xs text-slate-200 font-sans">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-slate-700">Evaluated Query</span>
+                  <div className="p-2.5 rounded bg-slate-50 border border-slate-200 text-xs text-slate-900">
                     "{selectedResult.verificationResult.question}"
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Generated Verified Response
-                  </span>
-                  <div className="p-3.5 rounded-lg bg-navy-950 border border-slate-800 text-xs text-slate-300 leading-relaxed font-sans">
+                <div className="space-y-1">
+                  <span className="text-xs font-semibold text-slate-700">Synthesized Answer</span>
+                  <div className="p-3 rounded bg-slate-50 border border-slate-200 text-xs text-slate-800 leading-relaxed">
                     {selectedResult.verificationResult.answer}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/60 text-xs text-slate-300">
-                  <span className="font-semibold text-slate-200 block mb-1">Evaluation Details:</span>
-                  <p className="text-slate-400">{selectedResult.explanation}</p>
+                <div className="p-2.5 rounded border border-slate-200 bg-white text-xs text-slate-600">
+                  <strong className="text-slate-900 font-semibold">Audit Verdict: </strong>
+                  {selectedResult.explanation}
                 </div>
 
                 {onNavigateToQA && (
                   <div className="flex justify-end pt-2">
                     <button
                       onClick={() => onNavigateToQA(selectedResult.verificationResult.question)}
-                      className="px-3.5 py-1.5 rounded-lg bg-electric-blue/10 hover:bg-electric-blue/20 border border-electric-blue/30 text-electric-blue text-xs font-medium flex items-center gap-1.5 transition-colors"
+                      className="px-3 py-1.5 rounded border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-medium flex items-center gap-1.5 transition-colors"
                     >
-                      <span>Open in Q&A Workspace</span>
+                      <span>Open in Console</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-8 text-center text-slate-500 text-xs">
-                Select a scenario to view detailed evaluation metrics.
+              <div className="p-8 text-center text-slate-400 text-xs border border-slate-200 rounded bg-white">
+                Select a fixture to view verification assertions.
               </div>
             )}
           </div>
         </div>
       ) : (
-        <div className="p-12 text-center rounded-xl bg-navy-900 border border-slate-800 space-y-4">
-          <FlaskConical className="w-12 h-12 text-electric-blue mx-auto opacity-70" />
-          <h3 className="text-base font-bold text-white">Adversarial Test Suite Ready</h3>
-          <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
-            Run the automated suite to verify explicit supersession, numeric contradictions, prompt injection quarantining, and effective-date boundary adherence.
+        <div className="p-8 text-center rounded border border-slate-200 bg-white space-y-3">
+          <FlaskConical className="w-8 h-8 text-slate-400 mx-auto" />
+          <h3 className="text-sm font-semibold text-slate-900">Adversarial Test Suite Ready</h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Click below to execute the 8 benchmark scenarios testing explicit supersession, numeric contradictions, prompt-injection quarantine, and effective-date boundaries.
           </p>
           <button
             onClick={handleRunAll}
             disabled={running}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-electric-blue to-electric-violet text-white text-xs font-semibold shadow-lg shadow-electric-blue/20"
+            className="px-4 py-2 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition-colors"
           >
-            Run Test Bench Now
+            Execute Benchmark Tests
           </button>
         </div>
       )}

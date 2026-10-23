@@ -20,7 +20,6 @@ export default function App() {
 
   const fetchHealthAndData = async () => {
     try {
-      // 1. Fetch Health
       const healthRes = await fetch('/api/health');
       if (healthRes.ok) {
         const health = await healthRes.json();
@@ -29,14 +28,12 @@ export default function App() {
         setSystemModel(health.model);
       }
 
-      // 2. Fetch Documents
       const docsRes = await fetch('/api/documents');
       if (docsRes.ok) {
         const docsData = await docsRes.json();
         setDocuments(docsData.documents || []);
       }
 
-      // 3. Fetch Conflicts
       const confRes = await fetch('/api/conflicts');
       if (confRes.ok) {
         const confData = await confRes.json();
@@ -58,11 +55,10 @@ export default function App() {
 
   const handleRunSampleQuestion = (question: string) => {
     setCurrentTab('qa');
-    // AskTruthGuard can receive and run the query
   };
 
   return (
-    <div className="flex h-screen bg-navy-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#f8fafc] text-slate-900 overflow-hidden font-sans">
       {/* Left Navigation Sidebar */}
       <Sidebar
         currentTab={currentTab}
@@ -79,7 +75,7 @@ export default function App() {
           systemModel={systemModel}
         />
 
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
           {currentTab === 'overview' && (
             <Overview
               documentCount={documents.length}

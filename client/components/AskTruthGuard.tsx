@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { 
   Search, 
   Send, 
-  Sparkles, 
-  Compass, 
   RotateCcw, 
   ShieldAlert,
-  Loader2
+  Loader2,
+  FileCheck2,
+  HelpCircle
 } from 'lucide-react';
 import { VerificationResult } from '../../shared/types';
 import { VerificationDisplay } from './VerificationDisplay';
@@ -25,9 +25,9 @@ export const AskTruthGuard: React.FC<AskTruthGuardProps> = ({ onSelectDocument }
     { label: 'Leave Entitlement (Explicit Supersession)', q: 'What is the current casual leave entitlement after April 1, 2025?' },
     { label: 'Leave Entitlement (Effective-Date Boundary)', q: 'What was the casual leave entitlement before April 2025?' },
     { label: 'Meal Reimbursement (Unresolved Contradiction)', q: 'What is the daily meal reimbursement limit?' },
-    { label: 'Password Policy (Unsupported Claim & Contradiction)', q: 'Does the policy require passwords to be changed every 30 days and require uppercase letters?' },
-    { label: 'Laptop Encryption (Irrelevant Newer Document Isolation)', q: 'Which policy governs laptop encryption?' },
-    { label: 'Missing Evidence (Negative Knowledge Check)', q: 'What is the company sabbatical policy for employees with 10 years of service?' }
+    { label: 'Password Policy (Contradiction & Best Practice)', q: 'Does the policy require passwords to be changed every 30 days and require uppercase letters?' },
+    { label: 'Laptop Encryption (Irrelevant Newer Policy)', q: 'Which policy governs laptop encryption?' },
+    { label: 'Missing Evidence (Refusal to Hallucinate)', q: 'What is the company sabbatical policy for employees with 10 years of service?' }
   ];
 
   const handleRunQuery = async (queryText: string) => {
@@ -57,78 +57,75 @@ export const AskTruthGuard: React.FC<AskTruthGuardProps> = ({ onSelectDocument }
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Intro Header */}
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-electric-blue" />
-          Multi-Agent Policy Verification Workspace
-        </h2>
-        <p className="text-sm text-slate-400">
-          Submit any policy query. TruthGuard activates four agents (Retriever, Synthesizer, Critic, Resolver) to detect cross-document contradictions and verify provenance before providing an answer.
-        </p>
+    <div className="max-w-5xl mx-auto space-y-4">
+      {/* Header section */}
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">Document Verification Console</h2>
+          <p className="text-xs text-slate-500">
+            Query across enterprise policy records. TruthGuard retrieves exact passages, extracts claims, detects contradictions, and justifies resolutions.
+          </p>
+        </div>
       </div>
 
-      {/* Query Input Box */}
-      <div className="p-4 rounded-xl bg-navy-900 border border-slate-800 shadow-xl space-y-3">
+      {/* Query Bar Card */}
+      <div className="bg-white border border-slate-200 rounded p-4 space-y-3">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleRunQuery(question);
           }}
-          className="relative"
+          className="flex gap-2"
         >
-          <input
-            type="text"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask a policy question (e.g. What is the daily meal reimbursement limit?)..."
-            className="w-full bg-navy-950 border border-slate-700/80 rounded-xl px-4 py-3.5 pr-28 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-electric-blue focus:ring-1 focus:ring-electric-blue transition-all"
-          />
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Enter a policy question to audit (e.g., What is the daily meal reimbursement limit?)..."
+              className="w-full bg-slate-50 border border-slate-300 rounded pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
+            />
+          </div>
           <button
             type="submit"
             disabled={loading || !question.trim()}
-            className="absolute right-2 top-2 bottom-2 px-4 rounded-lg bg-gradient-to-r from-electric-blue to-electric-violet hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+            className="px-4 py-2 rounded bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center gap-1.5 disabled:opacity-50 transition-colors shrink-0"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 <span>Verifying...</span>
               </>
             ) : (
               <>
-                <span>Verify</span>
+                <span>Verify Query</span>
                 <Send className="w-3.5 h-3.5" />
               </>
             )}
           </button>
         </form>
 
-        {/* Quick Example Chips */}
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-            <Compass className="w-3.5 h-3.5 text-electric-violet" />
-            <span>Preloaded Demonstration Scenarios (Click to test):</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {exampleQuestions.map((item, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleRunQuery(item.q)}
-                className="text-xs text-left px-3 py-1.5 rounded-lg bg-navy-950 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 transition-all font-medium"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+        {/* Example Questions Row */}
+        <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-[11px] font-semibold text-slate-500 mr-1">Preset Scenarios:</span>
+          {exampleQuestions.map((item, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleRunQuery(item.q)}
+              className="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200/60 font-medium"
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Error alert */}
       {error && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4" />
+        <div className="p-3 rounded border border-rose-200 bg-rose-50 text-rose-800 text-xs flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4 text-rose-600" />
           <span>{error}</span>
         </div>
       )}
@@ -142,16 +139,16 @@ export const AskTruthGuard: React.FC<AskTruthGuardProps> = ({ onSelectDocument }
         />
       )}
 
-      {/* Synthetic Corpus Notice */}
-      <div className="p-3.5 rounded-lg bg-navy-950/60 border border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
+      {/* Audit disclaimer */}
+      <div className="p-3 rounded bg-slate-50 border border-slate-200 text-[11px] text-slate-500 flex items-center justify-between">
         <span>
-          🛡️ <strong>Demo Workspace Note:</strong> TruthGuard operates on a bundled synthetic enterprise policy corpus. Verification quality depends strictly on available documented provenance.
+          Compliance Notice: Verification is deterministic and grounded strictly in the indexed corpus. TruthGuard reports irresolvable contradictions rather than selecting arbitrary winners.
         </span>
         <button
           onClick={() => handleRunQuery('What is the current casual leave entitlement after April 1, 2025?')}
-          className="text-electric-blue hover:underline whitespace-nowrap text-[11px]"
+          className="text-slate-900 font-semibold hover:underline whitespace-nowrap ml-4"
         >
-          Quick Run Scenario 1 →
+          Run Leave Supersession Audit →
         </button>
       </div>
     </div>

@@ -119,6 +119,6 @@ Visit `http://localhost:3000` in your browser.
 ---
 
 ## 8. Deployment Information
-- **Live URL**: `https://free-crabs-sit.loca.lt` (Bypass header: `bypass-tunnel-reminder: true` or click "Click to Continue" in browser)
+- **Live URL**: `https://truthguard-d75j.onrender.com/` (Bypass header: `bypass-tunnel-reminder: true` or click "Click to Continue" in browser)
 - **Local Fallback**: `http://localhost:3000`
 - **Docker / Production Ready**: Production static build bundled into `dist/` with a standalone Node.js server.

@@ -2,7 +2,7 @@
 
 > **Category**: Trustworthy AI / Multi-Agent Document Verification System  
 > **Target Audience**: Compliance teams, HR/legal operations, security researchers, and organizations with frequently updated policies.  
-> **Live Public URL**: [https://free-crabs-sit.loca.lt](https://free-crabs-sit.loca.lt)
+> **Live Public URL**: [https://truthguard-d75j.onrender.com/](https://truthguard-d75j.onrender.com/)
 
 ---
 

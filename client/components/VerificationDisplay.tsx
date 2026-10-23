@@ -71,13 +71,23 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
   const StatusIcon = status.icon;
   const supportedCount = result.claims.filter((claim) => claim.status === 'SUPPORTED').length;
   const attentionCount = result.claims.length - supportedCount;
+  const hasUsableEvidence = result.overallStatus !== 'INSUFFICIENT_EVIDENCE' && result.citedSources.length > 0;
+  const pointLabel = result.claims.length === 1 ? 'point' : 'points';
+  const sourceLabel = result.citedSources.length === 1 ? 'source' : 'sources';
+  const displayTitle = hasUsableEvidence ? "Here's the answer" : "I couldn't find this in the documents";
+  const displayAnswer = hasUsableEvidence
+    ? result.answer
+    : 'No matching policy document was found for this question. Try asking about leave, reimbursement, password rules, laptop security, or another uploaded policy topic.';
+  const explanation = hasUsableEvidence
+    ? result.resolutionExplanation
+    : 'Nothing relevant was found in the document library, so there is no source-backed answer to show.';
 
   return (
     <div className="space-y-4">
       <section className="tg-panel p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-extrabold leading-tight text-slate-950">Here's the answer</h2>
+            <h2 className="text-2xl font-extrabold leading-tight text-slate-950">{displayTitle}</h2>
             <p className="mt-1 text-sm text-slate-500">{status.helper}</p>
           </div>
 
@@ -89,7 +99,7 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
 
         <div className="mt-5 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
           <p className="whitespace-pre-wrap text-base font-medium leading-7 text-slate-900">
-            {result.answer}
+            {displayAnswer}
           </p>
         </div>
 
@@ -98,19 +108,31 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
           <p className="mt-1 text-sm font-bold leading-relaxed text-slate-800">{result.question}</p>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
-          <span className="rounded-full bg-slate-50 px-3 py-1.5">{result.claims.length} points checked</span>
-          <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-emerald-700">{supportedCount} supported</span>
-          {attentionCount > 0 && (
-            <span className="rounded-full bg-fuchsia-50 px-3 py-1.5 text-fuchsia-700">{attentionCount} need review</span>
-          )}
-          <span className="rounded-full bg-violet-50 px-3 py-1.5 text-violet-700">{result.citedSources.length} sources</span>
-        </div>
+        {hasUsableEvidence ? (
+          <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
+            <span className="rounded-full bg-slate-50 px-3 py-1.5">{result.claims.length} {pointLabel} checked</span>
+            <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-emerald-700">{supportedCount} supported</span>
+            {attentionCount > 0 && (
+              <span className="rounded-full bg-fuchsia-50 px-3 py-1.5 text-fuchsia-700">{attentionCount} need review</span>
+            )}
+            <span className="rounded-full bg-violet-50 px-3 py-1.5 text-violet-700">{result.citedSources.length} {sourceLabel}</span>
+          </div>
+        ) : (
+          <div className="mt-3 inline-flex rounded-full bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-500">
+            No matching source found
+          </div>
+        )}
 
-        {result.resolutionExplanation && (
-          <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
-            <p className="mb-1 text-sm font-bold text-slate-900">Why</p>
-            <p className="text-sm leading-relaxed text-slate-700">{result.resolutionExplanation}</p>
+        {explanation && (
+          <div className={`mt-4 rounded-2xl border p-4 ${
+            hasUsableEvidence
+              ? 'border-emerald-100 bg-emerald-50/60'
+              : 'border-slate-100 bg-slate-50'
+          }`}>
+            <p className="mb-1 text-sm font-bold text-slate-900">
+              {hasUsableEvidence ? 'Why' : 'What happened'}
+            </p>
+            <p className="text-sm leading-relaxed text-slate-700">{explanation}</p>
           </div>
         )}
       </section>
@@ -141,6 +163,7 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
         </section>
       )}
 
+      {hasUsableEvidence && result.claims.length > 0 && (
       <details className="tg-panel group p-5">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
           <span className="flex items-center gap-2">
@@ -170,8 +193,9 @@ export const VerificationDisplay: React.FC<VerificationDisplayProps> = ({
           ))}
         </div>
       </details>
+      )}
 
-      {result.citedSources.length > 0 && (
+      {hasUsableEvidence && result.citedSources.length > 0 && (
         <details className="tg-panel group p-5">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
             <span className="flex items-center gap-2">

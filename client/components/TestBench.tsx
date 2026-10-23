@@ -5,8 +5,7 @@ import {
   CheckCircle2, 
   XCircle, 
   Clock, 
-  Loader2,
-  ChevronRight
+  Loader2
 } from 'lucide-react';
 import { TestCase, TestResult, VerificationStatus } from '../../shared/types';
 
@@ -190,17 +189,6 @@ export const TestBench: React.FC<TestBenchProps> = ({ onNavigateToQA }) => {
                   {selectedResult.explanation}
                 </div>
 
-                {onNavigateToQA && (
-                  <div className="flex justify-end pt-2">
-                    <button
-                      onClick={() => onNavigateToQA(selectedResult.verificationResult.question)}
-                      className="tg-secondary-btn px-4 py-2"
-                    >
-                      <span>Open in Console</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="tg-panel p-8 text-center text-slate-400 text-xs">

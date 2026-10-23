@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Search, 
-  Send, 
-  RotateCcw, 
-  ShieldAlert,
-  Loader2,
+import {
   FileCheck2,
-  HelpCircle
+  HelpCircle,
+  Loader2,
+  RotateCcw,
+  Search,
+  Send,
+  ShieldAlert
 } from 'lucide-react';
 import { VerificationResult } from '../../shared/types';
 import { VerificationDisplay } from './VerificationDisplay';
@@ -22,12 +22,12 @@ export const AskTruthGuard: React.FC<AskTruthGuardProps> = ({ onSelectDocument }
   const [error, setError] = useState<string | null>(null);
 
   const exampleQuestions = [
-    { label: 'Leave Entitlement (Explicit Supersession)', q: 'What is the current casual leave entitlement after April 1, 2025?' },
-    { label: 'Leave Entitlement (Effective-Date Boundary)', q: 'What was the casual leave entitlement before April 2025?' },
-    { label: 'Meal Reimbursement (Unresolved Contradiction)', q: 'What is the daily meal reimbursement limit?' },
-    { label: 'Password Policy (Contradiction & Best Practice)', q: 'Does the policy require passwords to be changed every 30 days and require uppercase letters?' },
-    { label: 'Laptop Encryption (Irrelevant Newer Policy)', q: 'Which policy governs laptop encryption?' },
-    { label: 'Missing Evidence (Refusal to Hallucinate)', q: 'What is the company sabbatical policy for employees with 10 years of service?' }
+    { label: 'Current leave entitlement', q: 'What is the current casual leave entitlement after April 1, 2025?' },
+    { label: 'Leave before April 2025', q: 'What was the casual leave entitlement before April 2025?' },
+    { label: 'Meal reimbursement limit', q: 'What is the daily meal reimbursement limit?' },
+    { label: 'Password rotation rule', q: 'Does the policy require passwords to be changed every 30 days and require uppercase letters?' },
+    { label: 'Laptop encryption policy', q: 'Which policy governs laptop encryption?' },
+    { label: 'Sabbatical evidence check', q: 'What is the company sabbatical policy for employees with 10 years of service?' }
   ];
 
   const handleRunQuery = async (queryText: string) => {
@@ -50,107 +50,139 @@ export const AskTruthGuard: React.FC<AskTruthGuardProps> = ({ onSelectDocument }
       const data = await response.json();
       setResult(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to execute query verification.');
+      setError(err.message || 'Failed to verify this question.');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleClear = () => {
+    setQuestion('');
+    setResult(null);
+    setError(null);
+  };
+
+  const handleSelectExample = (queryText: string) => {
+    setQuestion(queryText);
+    setResult(null);
+    setError(null);
+  };
+
   return (
-    <div className="max-w-5xl mx-auto space-y-4">
-      {/* Header section */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+    <div className="tg-page">
+      <div className="tg-page-header">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Document Verification Console</h2>
-          <p className="text-xs text-slate-500">
-            Query across enterprise policy records. TruthGuard retrieves exact passages, extracts claims, detects contradictions, and justifies resolutions.
+          <h2 className="tg-title">Ask about a policy</h2>
+          <p className="tg-subtitle">
+            Get a clear answer from the documents, with the details available when you need them.
           </p>
         </div>
+        <div className="hidden sm:flex w-12 h-12 rounded-full bg-violet-600 text-white items-center justify-center shadow-lg shadow-violet-200">
+          <HelpCircle className="w-6 h-6" />
+        </div>
       </div>
 
-      {/* Query Bar Card */}
-      <div className="bg-white border border-slate-200 rounded p-4 space-y-3">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleRunQuery(question);
-          }}
-          className="flex gap-2"
-        >
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-            <input
-              type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Enter a policy question to audit (e.g., What is the daily meal reimbursement limit?)..."
-              className="w-full bg-slate-50 border border-slate-300 rounded pl-9 pr-4 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-all font-sans"
-            />
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_20rem] gap-5 items-start">
+        <section className="tg-panel p-5 space-y-4">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Your question</h3>
+            <p className="text-xs text-slate-400 mt-1">
+              Type it naturally. The answer will only use the uploaded documents.
+            </p>
           </div>
-          <button
-            type="submit"
-            disabled={loading || !question.trim()}
-            className="px-4 py-2 rounded bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center gap-1.5 disabled:opacity-50 transition-colors shrink-0"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Verifying...</span>
-              </>
-            ) : (
-              <>
-                <span>Verify Query</span>
-                <Send className="w-3.5 h-3.5" />
-              </>
-            )}
-          </button>
-        </form>
 
-        {/* Example Questions Row */}
-        <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="text-[11px] font-semibold text-slate-500 mr-1">Preset Scenarios:</span>
-          {exampleQuestions.map((item, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleRunQuery(item.q)}
-              className="text-[11px] px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200/60 font-medium"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleRunQuery(question);
+            }}
+            className="space-y-3"
+          >
+            <div className="relative">
+              <Search className="w-4 h-4 text-violet-400 absolute left-4 top-4" />
+              <textarea
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Example: What is the daily meal reimbursement limit?"
+                className="w-full min-h-28 resize-none rounded-2xl border border-violet-100 bg-white pl-11 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-300 outline-none focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
+              />
+            </div>
+
+            <div className="flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="tg-secondary-btn px-4 py-2.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-violet-500" />
+                <span>Clear</span>
+              </button>
+              <button
+                type="submit"
+                disabled={loading || !question.trim()}
+                className="tg-primary-btn px-5 py-2.5"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Checking...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Get answer</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {error && (
+            <div className="p-3 rounded-2xl border border-rose-100 bg-rose-50 text-rose-800 text-xs flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-rose-600" />
+              <span>{error}</span>
+            </div>
+          )}
+        </section>
+
+        <aside className="tg-panel p-5 space-y-4">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Common questions</h3>
+            <p className="text-xs text-slate-400 mt-1">Pick one to fill the question box.</p>
+          </div>
+
+          <div className="space-y-2">
+            {exampleQuestions.map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => handleSelectExample(item.q)}
+                className="w-full rounded-2xl border border-violet-100 bg-white px-3 py-3 text-left text-xs font-bold text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </aside>
       </div>
 
-      {/* Error alert */}
-      {error && (
-        <div className="p-3 rounded border border-rose-200 bg-rose-50 text-rose-800 text-xs flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-rose-600" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* Result Display */}
-      {result && (
+      {result ? (
         <VerificationDisplay
           result={result}
           loading={loading}
           onSelectDocument={onSelectDocument}
         />
+      ) : (
+        <div className="tg-panel p-8 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-violet-50 text-violet-600">
+            <FileCheck2 className="w-6 h-6" />
+          </div>
+          <h3 className="text-sm font-black text-slate-900">No question checked yet</h3>
+          <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-slate-400">
+            Enter a question or choose an example, then click Get answer. The answer will appear first, with details below it.
+          </p>
+        </div>
       )}
-
-      {/* Audit disclaimer */}
-      <div className="p-3 rounded bg-slate-50 border border-slate-200 text-[11px] text-slate-500 flex items-center justify-between">
-        <span>
-          Compliance Notice: Verification is deterministic and grounded strictly in the indexed corpus. TruthGuard reports irresolvable contradictions rather than selecting arbitrary winners.
-        </span>
-        <button
-          onClick={() => handleRunQuery('What is the current casual leave entitlement after April 1, 2025?')}
-          className="text-slate-900 font-semibold hover:underline whitespace-nowrap ml-4"
-        >
-          Run Leave Supersession Audit →
-        </button>
-      </div>
     </div>
   );
 };

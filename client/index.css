@@ -5,12 +5,70 @@
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f8fafc;
+    background-color: #f7f4ff;
     color: #0f172a;
     -webkit-font-smoothing: antialiased;
   }
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+@layer components {
+  .tg-page {
+    @apply max-w-6xl mx-auto space-y-5;
+  }
+
+  .tg-page-narrow {
+    @apply max-w-4xl mx-auto space-y-5;
+  }
+
+  .tg-page-header {
+    @apply rounded-[1.5rem] bg-white border border-white px-5 py-4 shadow-[0_18px_48px_rgba(109,40,217,0.08)] flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .tg-title {
+    @apply text-lg font-black tracking-tight text-slate-900;
+  }
+
+  .tg-subtitle {
+    @apply text-xs text-slate-400 mt-1 leading-relaxed;
+  }
+
+  .tg-panel {
+    @apply bg-white border border-white rounded-[1.5rem] shadow-[0_18px_48px_rgba(109,40,217,0.08)];
+  }
+
+  .tg-card {
+    @apply bg-white border border-slate-100 rounded-2xl shadow-sm;
+  }
+
+  .tg-primary-btn {
+    @apply rounded-full bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+
+  .tg-accent-btn {
+    @apply rounded-full bg-violet-600 hover:bg-violet-700 text-white font-black text-xs flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 shadow-lg shadow-violet-200 disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+
+  .tg-secondary-btn {
+    @apply rounded-full border border-violet-100 bg-white hover:bg-violet-50 text-slate-700 hover:text-violet-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all;
+  }
+
+  .tg-input {
+    @apply bg-white border border-violet-100 rounded-full text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-violet-300 focus:ring-4 focus:ring-violet-100 transition-all;
+  }
+
+  .tg-chip {
+    @apply rounded-full px-2.5 py-1 text-[11px] font-bold border transition-colors;
+  }
+
+  .tg-table {
+    @apply bg-white border border-white rounded-[1.5rem] shadow-[0_14px_36px_rgba(15,23,42,0.08)] overflow-hidden;
+  }
+
+  .tg-modal {
+    @apply w-full bg-white border border-white rounded-[1.5rem] shadow-[0_24px_80px_rgba(15,23,42,0.18)] overflow-hidden;
   }
 }
 

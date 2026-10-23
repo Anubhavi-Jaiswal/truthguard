@@ -1,42 +1,25 @@
 import React from 'react';
-import { Database, ShieldCheck, Cpu } from 'lucide-react';
-import { ExecutionMode } from '../../shared/types';
+import { Search } from 'lucide-react';
 
-interface HeaderProps {
-  mode: ExecutionMode;
-  systemProvider: string;
-  systemModel: string;
-}
-
-export const Header: React.FC<HeaderProps> = ({
-  mode,
-  systemProvider,
-  systemModel
-}) => {
+export const Header: React.FC = () => {
   return (
-    <header className="h-14 border-b border-slate-200 bg-white px-6 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 text-xs text-slate-600">
-          <Database className="w-3.5 h-3.5 text-slate-400" />
-          <span>Workspace:</span>
-          <span className="font-semibold text-slate-900">Policy Corpus</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono border border-slate-200">
-            HR • Security • Finance
-          </span>
+    <header className="min-h-20 px-4 sm:px-8 py-4 grid grid-cols-1 xl:grid-cols-[1fr_1.35fr] gap-4 items-center sticky top-0 z-10 bg-white/75 backdrop-blur-xl border-b border-white/70">
+      <div>
+        <div className="flex items-center gap-2 text-[11px] text-violet-400 font-bold">
+          <span>Workspace</span>
+          <span className="w-1 h-1 rounded-full bg-violet-500" />
+          <span>HR / Security / Finance</span>
         </div>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mt-1">
+          Dashboard
+        </h1>
       </div>
-
-      <div className="flex items-center gap-2.5">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-slate-200 bg-slate-50 text-[11px] font-mono text-slate-700">
-          <Cpu className="w-3 h-3 text-slate-500" />
-          <span>Engine:</span>
-          <strong className="text-slate-900">{mode === 'LIVE_AI' ? systemModel : 'Deterministic Rules'}</strong>
-        </div>
-
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-emerald-200 bg-emerald-50 text-[11px] font-medium text-emerald-800">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Audit-Verified</span>
-        </div>
+      <div className="relative">
+        <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-300" />
+        <input
+          className="w-full rounded-full border border-violet-100 bg-white px-11 py-3 text-xs text-slate-700 outline-none shadow-sm placeholder:text-slate-300 focus:border-violet-300 focus:ring-4 focus:ring-violet-100"
+          placeholder="Search policies, documents, and findings..."
+        />
       </div>
     </header>
   );

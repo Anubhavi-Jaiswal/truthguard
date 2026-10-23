@@ -117,12 +117,11 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
-      {/* Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
+    <div className="tg-page">
+      <div className="tg-page-header">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Document Registry</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="tg-title">Document Registry</h2>
+          <p className="tg-subtitle">
             Authoritative documents, effective date boundaries, and supersession links.
           </p>
         </div>
@@ -130,14 +129,14 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handleResetCorpus}
-            className="px-2.5 py-1.5 rounded border border-slate-300 hover:bg-slate-50 text-xs text-slate-700 font-medium flex items-center gap-1.5 transition-colors"
+            className="tg-secondary-btn px-3 py-2"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+            <RotateCcw className="w-3.5 h-3.5 text-violet-500" />
             <span>Reset Demo Corpus</span>
           </button>
           <button
             onClick={() => setIsUploading(true)}
-            className="px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
+            className="tg-accent-btn px-4 py-2"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Upload Document</span>
@@ -146,16 +145,16 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-slate-200 rounded p-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="tg-panel p-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1 text-xs">
           {['ALL', 'HR', 'IT_SECURITY', 'EXPENSE'].map(cat => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+              className={`rounded-xl px-3 py-2 text-xs font-bold transition-colors ${
                 filterCategory === cat
-                  ? 'bg-slate-900 text-white font-semibold'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-violet-600 text-white shadow-sm shadow-violet-100'
+                  : 'text-slate-500 hover:bg-violet-50 hover:text-violet-700'
               }`}
             >
               {cat === 'ALL' ? 'All Policies' : cat.replace('_', ' ')}
@@ -164,21 +163,20 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
         </div>
 
         <div className="relative">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-violet-400 absolute left-3 top-3" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter documents..."
-            className="bg-slate-50 border border-slate-300 rounded pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 w-64"
+            className="tg-input pl-9 pr-3 py-2.5 w-64"
           />
         </div>
       </div>
 
-      {/* Enterprise Data Table */}
-      <div className="bg-white border border-slate-200 rounded overflow-hidden">
+      <div className="tg-table">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+          <thead className="bg-violet-50/70 border-b border-violet-100 text-slate-500 font-bold">
             <tr>
               <th className="py-2.5 px-3">Title & Summary</th>
               <th className="py-2.5 px-3">Category</th>
@@ -188,19 +186,19 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
               <th className="py-2.5 px-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 text-slate-700">
+          <tbody className="divide-y divide-slate-100 text-slate-700">
             {filteredDocs.map(doc => (
               <tr 
                 key={doc.id}
                 onClick={() => setSelectedDoc(doc)}
-                className="hover:bg-slate-50 cursor-pointer transition-colors"
+                className="hover:bg-violet-50/60 cursor-pointer transition-colors"
               >
                 <td className="py-2.5 px-3 max-w-sm">
                   <div className="font-semibold text-slate-900 truncate">{doc.title}</div>
                   <div className="text-[11px] text-slate-500 truncate mt-0.5">{doc.content.slice(0, 90)}...</div>
                 </td>
                 <td className="py-2.5 px-3">
-                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-mono font-medium">
+                  <span className="px-2 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100 text-[10px] font-mono font-bold">
                     {doc.category}
                   </span>
                 </td>
@@ -211,7 +209,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                 </td>
                 <td className="py-2.5 px-3">
                   {doc.supersedes && doc.supersedes.length > 0 ? (
-                    <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-mono font-medium">
+                    <span className="px-2 py-1 rounded-full bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100 text-[10px] font-mono font-bold">
                       {doc.supersedes.length} policy
                     </span>
                   ) : (
@@ -224,7 +222,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                       e.stopPropagation();
                       setSelectedDoc(doc);
                     }}
-                    className="text-slate-700 hover:text-slate-900 font-medium mr-2 hover:underline"
+                    className="text-violet-700 hover:text-violet-800 font-bold mr-2"
                   >
                     View
                   </button>
@@ -253,8 +251,8 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
       {/* Document Detail Modal */}
       {selectedDoc && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl max-h-[85vh] bg-white border border-slate-300 rounded shadow-xl flex flex-col overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div className="tg-modal max-w-3xl max-h-[85vh] flex flex-col">
+            <div className="px-5 py-4 border-b border-violet-100 flex items-center justify-between bg-violet-50/70">
               <div>
                 <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">
                   {selectedDoc.category} • Version {selectedDoc.version}
@@ -263,7 +261,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
               </div>
               <button
                 onClick={() => setSelectedDoc(null)}
-                className="p-1 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-800"
+                className="p-1.5 rounded-xl hover:bg-white text-slate-500 hover:text-violet-700"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -271,21 +269,21 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
 
             <div className="p-5 overflow-y-auto space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
-                <div className="p-2 rounded bg-slate-50 border border-slate-200">
+                <div className="p-3 rounded-2xl bg-violet-50 border border-violet-100">
                   <span className="text-slate-500 block text-[10px]">Format</span>
                   <span className="text-slate-900 uppercase font-semibold">{selectedDoc.sourceType}</span>
                 </div>
-                <div className="p-2 rounded bg-slate-50 border border-slate-200">
+                <div className="p-3 rounded-2xl bg-fuchsia-50 border border-fuchsia-100">
                   <span className="text-slate-500 block text-[10px]">Published</span>
                   <span className="text-slate-900">{selectedDoc.publishedAt}</span>
                 </div>
-                <div className="p-2 rounded bg-slate-50 border border-slate-200">
+                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
                   <span className="text-slate-500 block text-[10px]">Effective Date</span>
                   <span className="text-emerald-700 font-semibold">{selectedDoc.effectiveFrom}</span>
                 </div>
-                <div className="p-2 rounded bg-slate-50 border border-slate-200">
+                <div className="p-3 rounded-2xl bg-purple-50 border border-purple-100">
                   <span className="text-slate-500 block text-[10px]">Supersedes</span>
-                  <span className="text-amber-700 font-semibold">{selectedDoc.supersedes?.join(', ') || 'None'}</span>
+                  <span className="text-purple-700 font-semibold">{selectedDoc.supersedes?.join(', ') || 'None'}</span>
                 </div>
               </div>
 
@@ -293,13 +291,13 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 block mb-1.5">
                   Extracted Passage Content
                 </span>
-                <pre className="p-4 rounded bg-slate-50 border border-slate-200 text-xs text-slate-800 font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                <pre className="p-4 rounded-2xl bg-slate-50 border border-violet-100 text-xs text-slate-800 font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
                   {selectedDoc.content}
                 </pre>
               </div>
             </div>
 
-            <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+            <div className="p-3 border-t border-violet-100 bg-violet-50/60 flex items-center justify-between">
               <button
                 onClick={() => handleDelete(selectedDoc.id)}
                 className="text-xs text-rose-700 hover:text-rose-800 flex items-center gap-1.5 px-2.5 py-1 rounded hover:bg-rose-50"
@@ -309,7 +307,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
               </button>
               <button
                 onClick={() => setSelectedDoc(null)}
-                className="px-3.5 py-1.5 rounded bg-slate-900 text-white text-xs font-medium hover:bg-slate-800"
+                className="tg-primary-btn px-4 py-2"
               >
                 Close Viewer
               </button>
@@ -321,15 +319,15 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
       {/* Upload Modal */}
       {isUploading && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white border border-slate-300 rounded shadow-xl p-5 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="tg-modal max-w-lg p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-violet-100 pb-3">
               <h3 className="font-semibold text-slate-900 text-sm flex items-center gap-1.5">
                 <Upload className="w-4 h-4 text-slate-700" />
                 Upload & Ingest Policy Document
               </h3>
               <button
                 onClick={() => setIsUploading(false)}
-                className="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800"
+                className="p-1.5 rounded-xl hover:bg-violet-50 text-slate-500 hover:text-violet-700"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -348,7 +346,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   type="file"
                   accept=".pdf,.docx,.txt,.md"
                   onChange={handleFileChange}
-                  className="w-full p-2 bg-slate-50 border border-slate-300 rounded text-slate-800 file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300"
+                  className="w-full p-2 bg-slate-50 border border-violet-100 rounded-xl text-slate-800 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200"
                 />
               </div>
 
@@ -359,7 +357,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. IT Security Standard: Encryption Guidelines"
-                  className="w-full p-2 bg-slate-50 border border-slate-300 rounded text-slate-900"
+                  className="tg-input w-full p-2.5"
                   required
                 />
               </div>
@@ -370,7 +368,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as PolicyCategory)}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded text-slate-900"
+                    className="tg-input w-full p-2.5"
                   >
                     <option value="HR">HR</option>
                     <option value="IT_SECURITY">IT Security</option>
@@ -384,7 +382,7 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                     type="text"
                     value={version}
                     onChange={(e) => setVersion(e.target.value)}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded text-slate-900"
+                    className="tg-input w-full p-2.5"
                   />
                 </div>
               </div>
@@ -395,21 +393,21 @@ export const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   type="date"
                   value={effectiveFrom}
                   onChange={(e) => setEffectiveFrom(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-300 rounded text-slate-900"
+                  className="tg-input w-full p-2.5"
                 />
               </div>
 
-              <div className="pt-2 border-t border-slate-200 flex justify-end gap-2">
+              <div className="pt-2 border-t border-violet-100 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsUploading(false)}
-                  className="px-3.5 py-1.5 rounded border border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="tg-secondary-btn px-4 py-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-3.5 py-1.5 rounded bg-slate-900 text-white font-medium hover:bg-slate-800"
+                  className="tg-accent-btn px-4 py-2"
                 >
                   Ingest & Index
                 </button>

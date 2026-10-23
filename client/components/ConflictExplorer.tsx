@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AlertOctagon, CheckCircle2, ShieldAlert, ArrowRight, RefreshCw } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, CheckCircle2, RefreshCw, ShieldAlert } from 'lucide-react';
 import { Conflict } from '../../shared/types';
 
 interface ConflictExplorerProps {
@@ -8,181 +8,231 @@ interface ConflictExplorerProps {
   onNavigateToQA?: (q: string) => void;
 }
 
+const getStatusLabel = (status: Conflict['resolutionStatus']) => {
+  if (status === 'RESOLVED') return 'Resolved';
+  if (status === 'CONDITIONAL') return 'Needs context';
+  return 'Needs review';
+};
+
+const getStatusStyle = (status: Conflict['resolutionStatus']) => {
+  if (status === 'RESOLVED') return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+  if (status === 'CONDITIONAL') return 'bg-amber-50 text-amber-700 border-amber-100';
+  return 'bg-rose-50 text-rose-700 border-rose-100';
+};
+
+const getSuggestedQuestion = (conflict: Conflict) => {
+  return conflict.id.includes('meal')
+    ? 'What is the daily meal reimbursement limit?'
+    : 'What is the current casual leave entitlement after April 1, 2025?';
+};
+
+const getShortTitle = (title: string) => {
+  return title.replace(/\s+/g, ' ').replace(/(.{42}).+/, '$1...');
+};
+
 export const ConflictExplorer: React.FC<ConflictExplorerProps> = ({
   conflicts,
   onRefresh,
   onNavigateToQA
 }) => {
-  const [selectedConflict, setSelectedConflict] = useState<Conflict | null>(
-    conflicts.length > 0 ? conflicts[0] : null
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(conflicts[0]?.id || null);
+
+  useEffect(() => {
+    if (!selectedId && conflicts.length > 0) {
+      setSelectedId(conflicts[0].id);
+      return;
+    }
+
+    if (selectedId && !conflicts.some((conflict) => conflict.id === selectedId)) {
+      setSelectedId(conflicts[0]?.id || null);
+    }
+  }, [conflicts, selectedId]);
+
+  const selectedConflict = useMemo(() => {
+    return conflicts.find((conflict) => conflict.id === selectedId) || conflicts[0] || null;
+  }, [conflicts, selectedId]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+    <div className="tg-page">
+      <div className="tg-page-header">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Conflict Registry & Comparison</h2>
-          <p className="text-xs text-slate-500">
-            Cross-document rule discrepancies identified across versions and categories.
+          <h2 className="tg-title">Conflict History</h2>
+          <p className="tg-subtitle">
+            Review earlier policy conflicts and open any item for details.
           </p>
         </div>
 
-        <button
-          onClick={onRefresh}
-          className="px-2.5 py-1.5 rounded border border-slate-300 hover:bg-slate-50 text-xs text-slate-700 font-medium flex items-center gap-1.5 transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
-          <span>Scan Active Conflicts</span>
+        <button onClick={onRefresh} className="tg-secondary-btn px-4 py-2">
+          <RefreshCw className="w-3.5 h-3.5 text-violet-500" />
+          <span>Refresh</span>
         </button>
       </div>
 
       {conflicts.length === 0 ? (
-        <div className="p-8 text-center rounded border border-slate-200 bg-white space-y-2">
+        <div className="tg-panel p-8 text-center space-y-2">
           <ShieldAlert className="w-8 h-8 text-emerald-600 mx-auto" />
-          <h3 className="text-sm font-semibold text-slate-900">No Unresolved Contradictions</h3>
+          <h3 className="text-sm font-semibold text-slate-900">No previous conflicts found</h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            All active documents in the library are mutually consistent or have documented legal supersession clauses.
+            The current document set does not have any stored conflicts to review.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Conflict list */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 block">
-              Discovered Discrepancies ({conflicts.length})
-            </span>
-            <div className="space-y-1.5">
-              {conflicts.map((c) => {
-                const isSelected = selectedConflict?.id === c.id;
+        <div className="grid grid-cols-1 lg:grid-cols-[22rem_1fr] gap-5 items-start">
+          <aside className="tg-panel p-4">
+            <div className="mb-4">
+              <h3 className="text-sm font-black text-slate-900">Previous conflicts</h3>
+            </div>
+
+            <div className="space-y-2">
+              {conflicts.map((conflict, index) => {
+                const isSelected = selectedConflict?.id === conflict.id;
                 return (
-                  <div
-                    key={c.id}
-                    onClick={() => setSelectedConflict(c)}
-                    className={`p-3 rounded border cursor-pointer transition-colors space-y-1 ${
+                  <button
+                    key={conflict.id}
+                    type="button"
+                    onClick={() => setSelectedId(conflict.id)}
+                    className={`w-full rounded-2xl border p-3 text-left transition-all ${
                       isSelected
-                        ? 'bg-slate-50 border-slate-400 shadow-xs'
-                        : 'bg-white border-slate-200 hover:border-slate-300'
+                        ? 'border-violet-200 bg-violet-50 shadow-sm'
+                        : 'border-slate-100 bg-white hover:border-violet-100 hover:bg-violet-50/50'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-xs">
-                      <span className={`px-1.5 py-0.2 rounded font-mono font-semibold text-[10px] ${
-                        c.resolutionStatus === 'RESOLVED'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}>
-                        {c.resolutionStatus}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        {c.severity} Severity
-                      </span>
+                    <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+                      <div className="min-w-0">
+                        <span className="text-[11px] font-black text-slate-400">
+                          Conflict {index + 1}
+                        </span>
+                        <div className="mt-1 text-sm font-bold leading-snug text-slate-900 line-clamp-3">
+                          {conflict.description}
+                        </div>
+                      </div>
+
+                      <div className="flex w-24 shrink-0 flex-col items-stretch gap-2">
+                        <span className={`text-center rounded-full border px-2 py-1 text-[10px] font-black ${getStatusStyle(conflict.resolutionStatus)}`}>
+                          {getStatusLabel(conflict.resolutionStatus)}
+                        </span>
+                        <span className={`text-center rounded-full px-2 py-1 text-[11px] font-black ${
+                          isSelected
+                            ? 'bg-violet-600 text-white'
+                            : 'bg-violet-50 text-violet-700'
+                        }`}>
+                          View
+                        </span>
+                      </div>
                     </div>
-                    <h4 className="font-semibold text-slate-900 text-xs line-clamp-2">
-                      {c.description}
-                    </h4>
-                  </div>
+                  </button>
                 );
               })}
             </div>
-          </div>
+          </aside>
 
-          {/* Detailed Inspector */}
-          <div className="lg:col-span-2">
-            {selectedConflict ? (
-              <div className="bg-white border border-slate-200 rounded p-5 space-y-4">
-                <div className="flex items-start justify-between border-b border-slate-100 pb-3">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase text-slate-400 block mb-0.5">
-                      Registry ID: {selectedConflict.id}
-                    </span>
-                    <h3 className="text-sm font-semibold text-slate-900">{selectedConflict.description}</h3>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded text-xs font-mono font-semibold ${
-                    selectedConflict.resolutionStatus === 'RESOLVED'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-rose-100 text-rose-800'
-                  }`}>
-                    {selectedConflict.resolutionStatus}
+          {selectedConflict && (
+            <section className="tg-panel overflow-hidden">
+              <div className="border-b border-violet-100 p-5 sm:p-6">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black ${getStatusStyle(selectedConflict.resolutionStatus)}`}>
+                    {getStatusLabel(selectedConflict.resolutionStatus)}
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase text-slate-500">
+                    {selectedConflict.severity.toLowerCase()} priority
                   </span>
                 </div>
 
-                <div className="space-y-1">
-                  <span className="text-xs font-semibold text-slate-700">Critic Discrepancy Analysis</span>
-                  <p className="text-xs text-slate-600 leading-relaxed p-3 rounded bg-slate-50 border border-slate-200">
+                <h3 className="text-xl font-black leading-snug text-slate-950">
+                  {selectedConflict.description}
+                </h3>
+
+                {onNavigateToQA && (
+                  <button
+                    onClick={() => onNavigateToQA(getSuggestedQuestion(selectedConflict))}
+                    className="tg-primary-btn mt-4 px-5 py-3"
+                  >
+                    <span>Ask about this conflict</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-6 p-5 sm:p-6">
+                <div>
+                  <h4 className="mb-2 text-sm font-black text-slate-900">What happened</h4>
+                  <p className="rounded-2xl border border-violet-100 bg-violet-50/70 p-4 text-sm leading-relaxed text-slate-700">
                     {selectedConflict.explanation}
                   </p>
                 </div>
 
-                {/* Side-by-side statements */}
-                {selectedConflict.conflictingStatements && (
-                  <div className="space-y-1.5">
-                    <span className="text-xs font-semibold text-slate-700">
-                      Conflicting Document Passages
-                    </span>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {selectedConflict.conflictingStatements.map((stmt, idx) => (
-                        <div key={idx} className="p-3 rounded bg-slate-50 border border-slate-200 space-y-2 text-xs flex flex-col justify-between">
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between text-[11px] text-slate-500 border-b border-slate-200 pb-1">
-                              <span className="font-semibold text-slate-900 truncate max-w-[200px]">
-                                {stmt.documentTitle}
-                              </span>
-                              <span className="font-mono text-slate-600">v{stmt.version}</span>
-                            </div>
-                            <div className="text-slate-800 italic pt-1 leading-snug">
-                              "{stmt.quote}"
-                            </div>
-                          </div>
-
-                          <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                            <span>Effective: {stmt.effectiveFrom}</span>
-                            {stmt.ruleValue !== undefined && (
-                              <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-900 font-bold">
-                                Cap: {stmt.ruleValue}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                {selectedConflict.conflictingStatements && selectedConflict.conflictingStatements.length > 0 && (
+                  <div>
+                    <h4 className="mb-2 text-sm font-black text-slate-900">What each document says</h4>
+                    <div className="overflow-hidden rounded-2xl border border-violet-100 bg-white">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-violet-50/70 text-slate-500">
+                          <tr>
+                            <th className="px-4 py-3 font-black">Document</th>
+                            <th className="px-4 py-3 font-black">Rule</th>
+                            <th className="px-4 py-3 font-black">Quote</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {selectedConflict.conflictingStatements.map((statement, index) => (
+                            <tr key={`${statement.passageId}-${index}`} className="align-top">
+                              <td className="px-4 py-4">
+                                <div className="font-black text-slate-900">
+                                  {getShortTitle(statement.documentTitle)}
+                                </div>
+                                <div className="mt-1 text-[11px] font-mono text-slate-400">
+                                  v{statement.version} | Effective {statement.effectiveFrom}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4">
+                                <span className="inline-flex rounded-full bg-violet-50 px-3 py-1 font-black text-violet-800">
+                                  {statement.ruleValue !== undefined ? statement.ruleValue : 'Not stated'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 text-slate-700 leading-relaxed">
+                                "{statement.quote}"
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 )}
 
-                {/* Precedence Justification */}
                 {selectedConflict.resolutionJustification && (
-                  <div className="p-3 rounded bg-white border border-emerald-200 text-xs space-y-1 text-emerald-900">
-                    <span className="font-semibold text-emerald-800 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Resolver Legal Precedence
-                    </span>
-                    <p className="leading-relaxed text-slate-700">
+                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+                    <div className="mb-1 flex items-center gap-2 text-sm font-black text-emerald-800">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Resolution note
+                    </div>
+                    <p className="text-sm leading-relaxed text-slate-700">
                       {selectedConflict.resolutionJustification}
                     </p>
                   </div>
                 )}
 
-                {/* Action button */}
                 {onNavigateToQA && (
-                  <div className="pt-2 flex justify-end">
+                  <div className="flex flex-wrap justify-end gap-3 border-t border-violet-100 pt-5">
                     <button
-                      onClick={() => onNavigateToQA(
-                        selectedConflict.id.includes('meal') 
-                          ? 'What is the daily meal reimbursement limit?' 
-                          : 'What is the current casual leave entitlement after April 1, 2025?'
-                      )}
-                      className="px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-1.5 transition-colors"
+                      onClick={onRefresh}
+                      className="tg-secondary-btn px-5 py-3"
                     >
-                      <span>Query in Verification Console</span>
+                      <RefreshCw className="w-3.5 h-3.5 text-violet-500" />
+                      <span>Refresh list</span>
+                    </button>
+                    <button
+                      onClick={() => onNavigateToQA(getSuggestedQuestion(selectedConflict))}
+                      className="tg-primary-btn px-5 py-3"
+                    >
+                      <span>Open in console</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="p-8 text-center text-slate-400 text-xs border border-slate-200 rounded bg-white">
-                Select a conflict to inspect comparative passages.
-              </div>
-            )}
-          </div>
+            </section>
+          )}
         </div>
       )}
     </div>

@@ -1,33 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
 import { Overview } from './components/Overview';
 import { AskTruthGuard } from './components/AskTruthGuard';
 import { DocumentLibrary } from './components/DocumentLibrary';
 import { ConflictExplorer } from './components/ConflictExplorer';
 import { TestBench } from './components/TestBench';
-import { SystemSettings } from './components/SystemSettings';
-import { Document, Conflict, ExecutionMode } from '../shared/types';
+import { Document, Conflict } from '../shared/types';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('overview');
   const [documents, setDocuments] = useState<Document[]>([]);
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
-  const [systemMode, setSystemMode] = useState<ExecutionMode>('DEMO_DETERMINISTIC');
-  const [systemProvider, setSystemProvider] = useState('deterministic-engine');
-  const [systemModel, setSystemModel] = useState('TruthGuard-RuleEngine-v1');
   const [selectedDocId, setSelectedDocId] = useState<string | undefined>(undefined);
 
   const fetchHealthAndData = async () => {
     try {
-      const healthRes = await fetch('/api/health');
-      if (healthRes.ok) {
-        const health = await healthRes.json();
-        setSystemMode(health.mode);
-        setSystemProvider(health.provider);
-        setSystemModel(health.model);
-      }
-
       const docsRes = await fetch('/api/documents');
       if (docsRes.ok) {
         const docsData = await docsRes.json();
@@ -58,8 +45,8 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] text-slate-900 overflow-hidden font-sans">
-      {/* Left Navigation Sidebar */}
+    <div className="min-h-screen bg-[#f4f0ff] text-slate-900 overflow-hidden font-sans">
+      <div className="flex h-screen m-0 bg-white/65 lg:m-5 lg:rounded-[2rem] lg:shadow-[0_24px_80px_rgba(15,23,42,0.12)] lg:border lg:border-white overflow-hidden">
       <Sidebar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -67,15 +54,8 @@ export default function App() {
         conflictCount={conflicts.length}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto min-w-0">
-        <Header
-          mode={systemMode}
-          systemProvider={systemProvider}
-          systemModel={systemModel}
-        />
-
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
+      <div className="flex-1 flex flex-col h-full overflow-y-auto min-w-0 bg-gradient-to-br from-white via-violet-50/50 to-fuchsia-50/40">
+        <main className="flex-1 p-4 sm:p-6 xl:p-8 max-w-7xl w-full mx-auto">
           {currentTab === 'overview' && (
             <Overview
               documentCount={documents.length}
@@ -117,16 +97,8 @@ export default function App() {
               }}
             />
           )}
-
-          {currentTab === 'system' && (
-            <SystemSettings
-              mode={systemMode}
-              provider={systemProvider}
-              model={systemModel}
-              onRefresh={fetchHealthAndData}
-            />
-          )}
         </main>
+      </div>
       </div>
     </div>
   );
